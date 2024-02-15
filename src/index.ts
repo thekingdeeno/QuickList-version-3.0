@@ -1,4 +1,4 @@
-import Fastify from 'fastify';
+import Fastify, { FastifyListenOptions } from 'fastify';
 import fastifyStatic from '@fastify/static';
 import fastifyView from '@fastify/view';
 import path from 'path';
@@ -13,8 +13,6 @@ import ejs from 'ejs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
-
 const fastify = Fastify({
     logger: true
 });
@@ -22,18 +20,16 @@ const fastify = Fastify({
 fastify.register(fastifyStatic, {
     root: path.join(__dirname, '../public'),
 })
-
 fastify.register(fastifyView, {
     engine: {
         ejs: ejs
     }
 })
-
 fastify.register(listRoute)
 
-fastify.listen({port: 3000}, (err) => {
-        if (err) {
-            fastify.log.error(err);
-            process.exit(1);
-        }
-    });
+fastify.listen({port: Number(process.env.PORT)}, (err, address) => {
+    if (err) {
+        fastify.log.error(err);
+        process.exit(1);
+    }
+});
